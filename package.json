@@ -1,0 +1,13 @@
+{
+  "name": "kmom01",
+  "version": "1.0.0",
+  "author": "Robin Hansson (roha15)",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-jshint": "^0.11.2",
+    "grunt-contrib-less": "^1.0.1",
+    "grunt-contrib-watch": "^0.6.1",
+    "socket.io": "^1.3.5"
+  }
+}
