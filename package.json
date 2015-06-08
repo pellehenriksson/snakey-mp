@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "author": "Robin Hansson (roha15)",
   "devDependencies": {
+    "express": "^4.12.4",
     "grunt": "^0.4.5",
     "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-jshint": "^0.11.2",

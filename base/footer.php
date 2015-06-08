@@ -86,13 +86,12 @@
 </div> <!-- END #wrapper -->
 
 <!-- INCLUDE JQUERY -->
-<script src="../../bower_components/jquery/dist/jquery.js"></script>
-
-<!-- INCLUDE CONCATENATED JS -->
 <script src="js/lib/jquery.min.js"></script>
-<script src="http://192.168.1.143:80/socket.io/socket.io.js"></script>
-<script src="js/Snake.js"></script>
+
+<!-- INCLUDE GAME JS -->
+<script src="http://localhost:8197/socket.io/socket.io.js"></script>
 <script src="js/site.js"></script>
+<script src="js/Snake.js"></script>
 <script src="js/Food.js"></script>
 <script src="js/game.animframe.js"></script>
 <script src="js/keys.js"></script>

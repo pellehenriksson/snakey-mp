@@ -1,24 +1,23 @@
 /**
  * Snake as an object
  *
- * @param length    int number of tails to start with
  * @param position  Vector object position object
- * @param direction string direction where to start moveing to
+ * @param length    int number of tails to start with
+ * @param direction string move direction
  */
-
-//function Snake(id, startPosition, direction, position, length) {
 function Snake(id, position, length, direction) {
-	this.id 		= id 			|| null;
-	this.p        	= position		|| new Vector(); // Start position
-	this.l 			= length   		|| 6; // Lenght of the snake
-	this.d        	= direction 	|| "right"; // Move Direction
+	this.id = id 			|| null;
+	this.p  = position		|| {x: 0, y:0} // Start position
+	this.l 	= length   		|| 6; // Lenght of the snake
+	this.d  = direction 	|| "right"; // Move Direction
 
 	// Always instantiate snake horizontal (simple way to init tail)
 	this.tail = [];
 	for (var i = this.l - 1; i >= 0; i--) {
-		this.tail.push(new Vector(this.p.x+i, this.p.y+0));
+		this.tail.push({x: this.p.x+i, y: this.p.y+0});
 	}
 }
+
 
 /**
  * Move snake +1
@@ -46,6 +45,7 @@ Snake.prototype.draw = function(ct, cw, color) {
   }
 };
 
+
 /**
  * Update direction by pressed key
  */
@@ -55,8 +55,3 @@ Snake.prototype.update = function() {
   if (Key.isDown(Key.DOWN, Key.S)   && this.d !== ("up"    || "W"))  {this.d = "down"; 	return "down";}
   if (Key.isDown(Key.RIGHT, Key.D)  && this.d !== ("left"  || "A"))  {this.d = "right"; return "right";}
 };
-
-// Crop object to make data smaller
-Snake.prototype.simplify = function() {
-	return {id: this.id, p: this.p, l: this.l, d: this.d, tail: this.tail};
-}

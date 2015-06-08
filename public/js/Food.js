@@ -5,7 +5,9 @@ function Food(position) {
 	this.p = position;
 }
 
-
+/**
+ * Paint the food
+ */
 Food.prototype.draw = function(ctx, cw) {
 	ctx.fillStyle = "#f15e58";
 	ctx.fillRect(this.p.x*cw, this.p.y*cw, cw, cw);

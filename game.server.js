@@ -1,18 +1,19 @@
-var io = require('socket.io')(80);
+var port = 8197;
+var io = require('socket.io')(port);
 var food;
-var players = []; // {id: userid, p: {x:0,y:0}, d: "right"}
-var playerPoints = []; // {id: userid, points: }
-var w=500,h=400,cw=10;
+var time = 1000; // Time between updates in the serverLoop
+var players = []; // {id: ..., p: ..., l: ..., d: ..., tail: ..., color: ...};
+var playerPoints = []; // {id: ..., points: ...};
+var w=900,h=400,cw=10;
 
-// Random position vector object
-function vector(x, y) {
-	this.x = x || Math.round(Math.random()*(w-cw)/cw);
-	this.y = y || Math.round(Math.random()*(h-cw)/cw);
-}
-
+/**
+ * Initialise the server
+ */
 function init() {
 	food = {p: new vector()};
 	setEventHandlers();
+	//serverLoop();
+	console.log('\nSnakeCave is now running\nPORT: ' + port + '\nLOOP UPDATE: ' + time + 'ms\n');
 };
 
 
@@ -20,13 +21,30 @@ var setEventHandlers = function() {
 	io.on('connection', onSocketConnection);
 };
 
+/**
+ * Functions to run on event
+ */
 function onSocketConnection(client) {
+
+	client.on( 'disconnect', onClientDisconnect);
 	client.on( 'new_player', onNewPlayer );
 	client.on( 'update_player', onUpdatePlayer );
 	client.on( 'new_food', onNewFood );
 };
 
 
+function onClientDisconnect() {
+	var playerId = this.client.id
+	this.broadcast.emit('remove_player', playerId);
+	
+	removePlayerById(playerId);
+	console.log('Player ' + playerId + ' disconnected');
+}
+
+
+/**
+ * New player joins or player require reposition
+ */
 function onNewPlayer() {
 	// Random hex-color 
 	// http://www.paulirish.com/2009/random-hex-color-code-snippets/
@@ -38,10 +56,6 @@ function onNewPlayer() {
 	} else {
 		player = {id: this.client.id, p: new vector(), l: null, d: null, tail: null, color: color};
 
-		// Send players, if any
-		if (players.length >= 1) {
-			this.emit('new_players', players);
-		}
 		this.emit('new_food', food);
 		this.emit('game_points', playerPoints);
 
@@ -51,6 +65,10 @@ function onNewPlayer() {
 		console.log('Total Players (' + players.length + ')');
 	}
 	io.sockets.emit('new_player', player);
+	// Send players, if any
+	if (players.length >= 1) {
+		this.emit('new_players', players);
+	}
 	resetPlayerPointsById(player.id);
 	updateGamePoints()
 };
@@ -73,7 +91,7 @@ function onNewFood(player) {
 
 	// Repositioning the food
 	food = {p: new vector()};
-	// Send food position to all connected
+	// Send food position to all connected players
 	io.sockets.emit('new_food', food);
 	console.log('New food position (' + food.p.x + ',' + food.p.y + ')');
 };
@@ -87,10 +105,39 @@ function updateGamePoints() {
 	io.sockets.emit('game_points', playerPoints);
 }
 
+function updatePlayers() {
+	io.sockets.emit('new_players', players);
+}
+
+
+// /**
+// * Server Loop, a tiny step towards interpolation.
+// * Server sends data about all stored players.  
+// *
+// */
+// function serverLoop() {
+//     setTimeout(function () {
+//     	// Send information about 
+//     	if (players.length >= 1) {
+// 	    	var i;
+// 	    	for (i = 0; i < players.length; i++) {
+// 	    		io.sockets.emit('update_player', players[i]);
+// 	    	}
+// 	    }
+//         serverLoop();
+//     }, time);
+// }
+
+
 
 /**************************************************
 ** GAME HELPER FUNCTIONS
 **************************************************/
+// Random position vector object
+function vector(x, y) {
+	this.x = x || Math.round(Math.random()*(w-cw)/cw);
+	this.y = y || Math.round(Math.random()*(h-cw)/cw);
+}
 
 
 function addPointsByPlayerId(id) {
@@ -149,12 +196,33 @@ function resetPlayerPointsById(id) {
 }
 
 
+// Remove player by id
+function removePlayerById(id) {
+	var i;
+	// Remove from players
+	for (i = 0; i < players.length; i++) {
+		if (players[i].id === id)
+			players.splice(i,1);
+			return;
+	};
+	// Remove points
+	for (i = 0; i < playerPoints.length; i++) {
+		if (playerPoints[i].id === id)
+			playerPoints.splice(i,1);
+			return;
+	};
+	// Update player information
+	updatePlayers();
+}
+
+
 // Find player by ID
 function playerById(id) {
 	var i;
 	for (i = 0; i < players.length; i++) {
-		if (players[i].id === id)
+		if (players[i].id === id) {
 			return players[i];
+		}
 	};
 	
 	return false;

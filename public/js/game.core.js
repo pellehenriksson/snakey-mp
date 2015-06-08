@@ -43,63 +43,71 @@ window.Game = (function() {
 	};
 
 
+	// Player connected to server
 	function onSocketConnected() {
-		console.log('Welcome to SnakeCave!');
+		logger('mess', 'Connected to server');
 		// Get player info from server
 		socket.emit('new_player');
 	};
 
 
 	function onSocketDisconnect() {
-		console.log('Disconnected from server');
+		logger('mess', 'Server disconnected');
 	};
 
 
+	// Receive list of connected players
 	function onNewPlayers(players) {
 		var i;
 		for (i = 0; i < players.length; i++) {
+			if (players[i].id === localPlayer.id) { continue; } // Ignore localPlayer
+			// Add player color
 			colorByPlayerId(players[i].id) ? null : playerColors.push({id: players[i].id, color: players[i].color});
 			addPlayerToPlayers(players[i]);
 			addPlayerToPlayerPoints(players[i]);
 		}
+		logger('mess', 'Updating connected player');
 	};
 
-
+	// New player joined
 	function onNewPlayer(player) {
+		// Set color to new player
+		colorByPlayerId(player.id) ? null : playerColors.push({id: player.id, color: player.color});
+		// If player is local
 		if (player.id === socket.id) {
-			colorByPlayerId(player.id) ? null : playerColors.push({id: player.id, color: player.color});
 			localPlayer = new Snake(player.id, player.p);
-			
 			if (!gameInit) {
+				logger('mess', 'Starting Game');
 				gameInit = true;
 				gameLoop(); // Start loop
-				console.log('Player Instantiated with ID: ' + player.id);
-				console.log('Game Started');
+				logger('mess', 'You got ID: ' + player.id);
 			}
-
 		} else {
 			addPlayerToPlayers(player);
 		}
 	};
 
 
+	// Update player information
 	function onUpdatePlayer(player) {
-		// Update player changes
-		if (remotePlayers.length >= 1) {
+		// Update player changes except local player
+		if (remotePlayers.length >= 1 && player.id !== localPlayer.id) {
 			updatePlayerInPlayers(player);
 		}
 	};
 
 
+	// Food got new position
 	function onNewFood(food) {
 		localFood = new Food(food.p);
-		console.log('Got Food on: ' + food.p.x + ',' + food.p.y);
+		logger('mess', 'Food was taken!');
 	};
 
 
+	// Receive gamepoints from server
 	function onGamePoints(data) {
+		// Updates playerPoints from server
 		playerPoints = data;
-
 		playerPoints.sort(function(obj1, obj2) {
 			return  obj2.points-obj1.points;
 		});
@@ -121,6 +129,7 @@ window.Game = (function() {
 	function gotFood() {
 		var _player = {id: localPlayer.id, p: {x: localPlayer.tail[0].x, y: localPlayer.tail[0].y}, d: localPlayer.d, l: localPlayer.l, tail: localPlayer.tail};
 		socket.emit('new_food', _player);
+		logger('mess', 'You got the food!');
 	};
 
 	// Request a new player from server
@@ -191,17 +200,25 @@ window.Game = (function() {
 		}
 	};
 
-
+	// Get color by player id
 	function colorByPlayerId(id) {
 		var i;
 		for (i = 0; i < playerColors.length; i++) {
-			if (playerColors[i].id === id)
+			if (playerColors[i].id === id) {
 				return playerColors[i].color;
+			}
 		};
 		
 		return false;
 	}
 
+
+	// Send messages to player
+	function logger(type, message) {
+		//var now = Date.now();
+		var date = new Date();
+		$('#output').append('<p class="' + type + '"><span class="time-stamp">[' + date.getTime() + '] : </span>' + message + '</p><br>');
+	}
 
 
 
@@ -274,7 +291,6 @@ window.Game = (function() {
 			var x = remotePlayers[i].tail[0].x, y = remotePlayers[i].tail[0].y;
 			var rump;
 			if (x === localFood.p.x && y === localFood.p.y) {
-				//gotFood();
 				rump = new Vector(x,y);
 		 	} else {
 			    rump = remotePlayers[i].tail.pop();

@@ -1,15 +1,17 @@
 var socket;
-var server_address = 'http://127.0.0.1/';
+var server_address = 'ws://127.0.0.1:8197';
 
 (function() {
 	'use strict';
 
 	function connect() {
 		setTimeout(function() {
-			try { 
+			// Try to connect to server
+			try {
 				socket = io(server_address);
 				$('#start-button').toggleClass('success');
 			}
+			// Animate error message
 			catch (e) {
 				$('#start-button').toggleClass('fail').text('error');
 				$('#connect-info').animate({
@@ -19,21 +21,22 @@ var server_address = 'http://127.0.0.1/';
 				    // Animation complete.
 				  });
 			}
+			// Hide loader
 			finally {
 				$('#start-button i').hide();
 			}
 		}, 3000);
 	}
 
-	
+	// Start game
 	$('#start-button').click(function() {
-
 		if (socket) {
-
+			// Hide report section
 			$('#report').hide()
 			$("#intro-cover").fadeOut( "slow", function() {
 				Game.init(socket);
-				$('#player-stats').show()
+				// Show game stats and messages
+				$('#bottom').show()
 			});
 		}
 	});

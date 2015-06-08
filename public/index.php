@@ -1,4 +1,4 @@
-<?php $title='Template for testprogram'; include(__DIR__ . '/../base/header.php'); ?>
+<?php $title='Snakey MP'; include(__DIR__ . '/../base/header.php'); ?>
 
 <header></header>
 <div id="content">
@@ -20,14 +20,16 @@
 			</button>
 			<div id="connect-info">
 				<p>
-					Connection to SnakeCave failed! Snakey is at the moment multiplayer only and needs a server to be playable. Visit the github page to run your own SnakeCave.
+					SnakeCave seems to be unreachable. Contact host or visit the <a href='https://github.com/rarths/snakey-mp'>gist</a> to run your own SnakeCave.
 				</p>
 			</div>
 		</div>
 	</div>
 
-	<table id="player-stats">
-	</table>
+	<div id="bottom">
+		<table id="player-stats"></table>
+		<output id="output"></output>	
+	</div>
 </div>
 
 <?php $path=__DIR__; include(__DIR__ . '/../base/footer.php'); ?>

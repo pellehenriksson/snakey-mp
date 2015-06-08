@@ -228,22 +228,29 @@ button.fail {
  * BOTTOM
  *
  */
+#bottom {
+  margin-top: 20px;
+  width: 100%;
+  float: left;
+  display: none;
+}
+#player-stats {
+  color: #494949;
+  float: left;
+  font-weight: 300;
+}
 table {
   width: 110px;
   background-color: #e6e6e6;
 }
-tr {
-  margin-bottom: 10px;
-}
 td {
   text-align: center;
-  padding: 4px 0;
   vertical-align: middle;
   color: #bfbfbf;
 }
 #color {
   width: 28px;
-  height: 18px;
+  height: 28px;
   border: 8px solid #e6e6e6;
 }
 .c1 {
@@ -255,26 +262,26 @@ td {
 .c3 {
   background-color: #72d6e8;
 }
-#bottom {
-  margin-top: 20px;
-  width: 100%;
+#output {
+  margin-left: 20px;
+  width: 740px;
   float: left;
-}
-#player-stats {
-  margin-top: 20px;
-  color: #494949;
-  float: left;
-  font-weight: 300;
-  display: none;
-}
-#messages {
-  width: 664px;
-  float: left;
+  height: 100px;
   background-color: #e6e6e6;
+  overflow: auto;
+  padding: 15px;
 }
-#messages p,
-#messages h3 {
-  padding: 20px;
+#output p {
+  color: #7f7f7f;
+  font-size: 0.8em;
+  padding: 0;
+  line-height: 1;
+}
+#output .error {
+  color: #f15e58;
+}
+#output .time-stamp {
+  color: #bfbfbf;
 }
 #report {
   margin-top: 60px;
