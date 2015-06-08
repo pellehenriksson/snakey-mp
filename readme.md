@@ -29,7 +29,7 @@ Install
 npm install
 ```
 
-- Start the server (if event error is thrown, run with sudo)
+- Start the server. If event error is thrown, run with sudo or change to a higher port number.
 ```js
 node game.server.js
 ```

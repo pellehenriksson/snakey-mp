@@ -39,6 +39,7 @@ function onClientDisconnect() {
 	
 	removePlayerById(playerId);
 	console.log('Player ' + playerId + ' disconnected');
+	console.log('Total Players Connected ' + players.length);
 }
 
 
@@ -62,7 +63,7 @@ function onNewPlayer() {
 		addPlayerToPlayers(player);
 
 		console.log('Player ' + player.id + ' connected.');
-		console.log('Total Players (' + players.length + ')');
+		console.log('Total Players Connected ' + players.length);
 	}
 	io.sockets.emit('new_player', player);
 	// Send players, if any
@@ -201,18 +202,20 @@ function removePlayerById(id) {
 	var i;
 	// Remove from players
 	for (i = 0; i < players.length; i++) {
-		if (players[i].id === id)
-			players.splice(i,1);
-			return;
+		if (players[i].id === id) {
+			players.splice(i,1); 
+			break;
+		}
 	};
 	// Remove points
 	for (i = 0; i < playerPoints.length; i++) {
-		if (playerPoints[i].id === id)
+		if (playerPoints[i].id === id) {
 			playerPoints.splice(i,1);
-			return;
+			break;
+		}
 	};
-	// Update player information
-	updatePlayers();
+	io.sockets.emit('new_players', players);
+	io.sockets.emit('game_points', playerPoints);
 }
 
 

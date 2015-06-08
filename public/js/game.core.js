@@ -37,6 +37,7 @@ window.Game = (function() {
 		socket.on( 'disconnect', onSocketDisconnect );
 		socket.on( 'new_players', onNewPlayers );
 		socket.on( 'new_player', onNewPlayer );
+		socket.on( 'remove_player', onRemovePlayer );
 		socket.on( 'update_player', onUpdatePlayer );
 		socket.on( 'new_food', onNewFood );
 		socket.on( 'game_points', onGamePoints );
@@ -86,6 +87,27 @@ window.Game = (function() {
 			addPlayerToPlayers(player);
 		}
 	};
+
+
+	// Removes player when disconnecting
+	function onRemovePlayer(id) {
+		var i;
+		// Remove from players
+		for (i = 0; i < remotePlayers.length; i++) {
+			if (remotePlayers[i].id === id) {
+				remotePlayers.splice(i,1);
+				break;
+			}
+		};
+		// Remove points
+		for (i = 0; i < playerPoints.length; i++) {
+			if (playerPoints[i].id === id) {
+				playerPoints.splice(i,1);
+				break;
+			}
+		};
+		logger('error', 'Player ' + id +' disconnected');
+	}
 
 
 	// Update player information
@@ -215,9 +237,10 @@ window.Game = (function() {
 
 	// Send messages to player
 	function logger(type, message) {
-		//var now = Date.now();
+		var output = $('#output');
 		var date = new Date();
-		$('#output').append('<p class="' + type + '"><span class="time-stamp">[' + date.getTime() + '] : </span>' + message + '</p><br>');
+		output.append('<p class="' + type + '"><span class="time-stamp">[' + date.getTime() + '] : </span>' + message + '</p><br>');
+		output.animate({ scrollTop: $(document).height() }, 1000);
 	}
 
 
