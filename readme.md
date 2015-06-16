@@ -77,5 +77,6 @@ Todo
 
 History
 ----------------------------------
+ - Fixed a bug that makes players respawn when localplayer dies
 
 v1.1 Project ready for deploy

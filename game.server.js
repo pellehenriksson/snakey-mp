@@ -4,7 +4,7 @@ var food;
 var time = 1000; // Time between updates in the serverLoop
 var players = []; // {id: ..., p: ..., l: ..., d: ..., tail: ..., color: ...};
 var playerPoints = []; // {id: ..., points: ...};
-var w=900,h=400,cw=10;
+var w=900,h=400,cw=10; // Canvas size
 
 /**
  * Initialise the server
@@ -17,6 +17,7 @@ function init() {
 };
 
 
+// Adapt allt the events to the eventhandler
 var setEventHandlers = function() {
 	io.on('connection', onSocketConnection);
 };
@@ -33,6 +34,7 @@ function onSocketConnection(client) {
 };
 
 
+// When client connects
 function onClientDisconnect() {
 	var playerId = this.client.id
 	this.broadcast.emit('remove_player', playerId);
@@ -62,19 +64,21 @@ function onNewPlayer() {
 
 		addPlayerToPlayers(player);
 
+		//Send players, if any
+		if (players.length >= 1) {
+			this.emit('new_players', players);
+		}
+
 		console.log('Player ' + player.id + ' connected.');
 		console.log('Total Players Connected ' + players.length);
 	}
 	io.sockets.emit('new_player', player);
-	// Send players, if any
-	if (players.length >= 1) {
-		this.emit('new_players', players);
-	}
+	
 	resetPlayerPointsById(player.id);
 	updateGamePoints()
 };
 
-
+// When client is updating player data
 function onUpdatePlayer(player) {
 	// Broadcast player changes to connected players except sender
 	this.broadcast.emit('update_player', player);
@@ -82,6 +86,7 @@ function onUpdatePlayer(player) {
 };
 
 
+// Player got the food. Tell other players about the catch!
 function onNewFood(player) {
 	// Add +1 to snake's tail
 	this.broadcast.emit('update_player', player);
@@ -106,6 +111,7 @@ function updateGamePoints() {
 	io.sockets.emit('game_points', playerPoints);
 }
 
+// Update player information
 function updatePlayers() {
 	io.sockets.emit('new_players', players);
 }
@@ -141,6 +147,7 @@ function vector(x, y) {
 }
 
 
+// App points to player by id localy
 function addPointsByPlayerId(id) {
 	var i;
 	for (i = 0; i < playerPoints.length; i++) {
@@ -214,6 +221,7 @@ function removePlayerById(id) {
 			break;
 		}
 	};
+	// Send information to all players
 	io.sockets.emit('new_players', players);
 	io.sockets.emit('game_points', playerPoints);
 }

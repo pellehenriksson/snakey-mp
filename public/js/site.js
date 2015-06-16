@@ -32,7 +32,7 @@ var server_address = 'ws://127.0.0.1:8197';
 	$('#start-button').click(function() {
 		if (socket) {
 			// Hide report section
-			$('#report').hide()
+			$('#presentation').hide()
 			$("#intro-cover").fadeOut( "slow", function() {
 				Game.init(socket);
 				// Show game stats and messages
